@@ -8,8 +8,7 @@ import Tools.AESImpl;
 import Tools.HelperFunctions;
 import Tools.KDCResponse;
 import Tools.YABMessage;
-import java.sql.Time;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
 public class User{
@@ -34,12 +33,12 @@ public class User{
         return aes;
     }
 
-    private Time lifetimeVerifier(AESImpl aes, KDCResponse kdcResponse) throws LifetimeExpiredException{
+    private LocalDateTime lifetimeVerifier(AESImpl aes, KDCResponse kdcResponse) throws LifetimeExpiredException{
         byte[] decLifetime = aes.decrypt(kdcResponse.getCipTime());
         String lifetime = new String(decLifetime);
-        Time lifetimeTime = Time.valueOf(lifetime);
-        Time currentTime = Time.valueOf(LocalTime.now());
-        if(currentTime.after(lifetimeTime))
+        LocalDateTime lifetimeTime = LocalDateTime.parse(lifetime);
+        LocalDateTime currentTime = LocalDateTime.now();
+        if(currentTime.isAfter(lifetimeTime))
             throw new LifetimeExpiredException();
         return lifetimeTime;
     }
@@ -58,7 +57,7 @@ public class User{
 
         lifetimeVerifier(aes,kdcResponse);
 
-        Time timestamp = HelperFunctions.generateTimestamp();
+        LocalDateTime timestamp = HelperFunctions.generateTimestamp();
 
         aes.setTheKey(sessionKey);
         byte[] cipSelfId = aes.encrypt(id.getBytes());
@@ -71,7 +70,7 @@ public class User{
 
         byte[] decOtherId = aes.decrypt(kdcResponse.getCipOtherId());
         String otherId1 = new String(decOtherId);
-        Time lifetime = lifetimeVerifier(aes,kdcResponse);
+        LocalDateTime lifetime = lifetimeVerifier(aes,kdcResponse);
 
         aes.setTheKey(this.sessionKey);
 
@@ -82,9 +81,9 @@ public class User{
 
         byte[] decTimestamp = aes.decrypt(yabMessage.getTimestamp());
         String ts = new String(decTimestamp);
-        Time timestamp = Time.valueOf(ts);
+        LocalDateTime timestamp = LocalDateTime.parse(ts);
 
-        if(timestamp.after(lifetime))
+        if(timestamp.isAfter(lifetime))
             throw new TimestampExpiredException();
     }
 
@@ -100,44 +99,12 @@ public class User{
         return new String(aes.decrypt(message));
     }
 
-    public String getUsername(){
-        return username;
-    }
-
-    public void setUsername(String username){
-        this.username = username;
-    }
-
     public String getId(){
         return id;
     }
 
-    public void setSelfId(String selfId){
-        this.id = selfId;
-    }
-
-    public String getKey(){
-        return key;
-    }
-
-    public void setKey(String key){
-        this.key = key;
-    }
-
-    public byte[] getSessionKey(){
-        return sessionKey;
-    }
-
-    public void setSessionKey(byte[] sessionKey){
-        this.sessionKey = sessionKey;
-    }
-
     public byte[] getNonce(){
         return nonce;
-    }
-
-    public void setNonce(byte[] nonce){
-        this.nonce = nonce;
     }
 
     public void setOtherId(String otherId){

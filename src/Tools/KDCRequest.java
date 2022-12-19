@@ -1,11 +1,11 @@
 package Tools;
 
-public class RQST{
+public class KDCRequest{
     String idA;
     String idB;
     byte[] nonce;
 
-    public RQST(String idA, String idB, byte[] nonce){
+    public KDCRequest(String idA, String idB, byte[] nonce){
         this.idA = idA;
         this.idB = idB;
         this.nonce = nonce;

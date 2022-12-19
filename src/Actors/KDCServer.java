@@ -3,12 +3,12 @@ package Actors;
 import Tools.AESImpl;
 import Tools.HelperFunctions;
 import Tools.KDCResponse;
-import Tools.RQST;
+import Tools.KDCRequest;
 import java.util.ArrayList;
 
 public class KDCServer{
-    private String keyA;
-    private String keyB;
+    private final String keyA;
+    private final String keyB;
 
     public KDCServer(String keyA, String keyB){
         this.keyA = keyA;
@@ -16,12 +16,12 @@ public class KDCServer{
     }
 
 
-    public ArrayList<KDCResponse> ResponseGenerator(RQST request){
+    public ArrayList<KDCResponse> ResponseGenerator(KDCRequest request){
         byte[] sessionKey = HelperFunctions.generateSessionKeyOrNonce();
         String lifetime = HelperFunctions.generateLifetime();
         AESImpl aes = new AESImpl();
 
-        //This is for Allice, yA
+        //This is for Alice, yA
         aes.setTheKey(keyA.getBytes());
         byte[] cipSessionKey = aes.encrypt(sessionKey);
         byte[] cipNonce = aes.encrypt(request.getNonce());

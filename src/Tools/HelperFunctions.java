@@ -2,6 +2,7 @@ package Tools;
 
 import java.security.SecureRandom;
 import java.sql.Time;
+import java.time.LocalDateTime;
 
 public class HelperFunctions{
     public static byte[] generateSessionKeyOrNonce(){
@@ -12,10 +13,10 @@ public class HelperFunctions{
     }
 
     public static String generateLifetime(){
-        return new Time(System.currentTimeMillis()+1000*60*60).toString();//1 hour
+        return LocalDateTime.now().plusHours(1).toString();
     }
 
-    public static Time generateTimestamp(){
-        return new Time(System.currentTimeMillis());
+    public static LocalDateTime generateTimestamp(){
+        return LocalDateTime.now();
     }
 }
